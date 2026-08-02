@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f5;
+  --foreground: #14181f;
+  --muted: #667085;
+  --border: #e4e7ec;
+  --primary: #1f6feb;
+  --primary-fg: #ffffff;
+  --income: #1a7f4b;
+  --expense: #c23b3b;
+  --accent: #7c5cff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-income: var(--income);
+  --color-expense: var(--expense);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1c2230;
+    --foreground: #e6edf3;
+    --muted: #8b949e;
+    --border: #2a313c;
+    --primary: #4c8dff;
+    --income: #3fb950;
+    --expense: #f0616d;
+    --accent: #a78bfa;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+}
+
+@layer components {
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: var(--primary); color: var(--primary-fg); }
+  .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+  .btn-ghost { background: transparent; border-color: var(--border); color: var(--foreground); }
+  .btn-ghost:hover:not(:disabled) { background: var(--surface-2); }
+  .btn-danger { background: transparent; border-color: var(--border); color: var(--expense); }
+  .btn-danger:hover:not(:disabled) { background: var(--surface-2); }
+  .input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.9rem;
+    color: var(--foreground);
+    outline: none;
+  }
+  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent); }
+  .label { font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.3rem; display: block; }
+}

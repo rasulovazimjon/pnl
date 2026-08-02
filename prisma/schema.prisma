@@ -1,0 +1,136 @@
+// Personal PnL — data model
+// Local dev uses SQLite. To deploy on Supabase/Postgres, change:
+//   provider = "postgresql"
+// and set DATABASE_URL to the Supabase connection string. No other change needed.
+// Amounts are stored as INTEGER minor-less UZS (so'm has no decimal subunit).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Household {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  users        User[]
+  categories   Category[]
+  transactions Transaction[]
+  budgets      Budget[]
+  recurring    RecurringRule[]
+}
+
+enum Role {
+  HUSBAND
+  WIFE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  role         Role
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+}
+
+enum CategoryType {
+  INCOME
+  COGS
+  EXPENSE
+}
+
+model Category {
+  id     String       @id @default(cuid())
+  name   String
+  type   CategoryType
+  // Optional two-level hierarchy: a category may have a parent.
+  parentId String?
+  parent   Category?  @relation("CategoryChildren", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryChildren")
+  archived Boolean    @default(false)
+  sortOrder Int       @default(0)
+
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+  budgets      Budget[]
+  recurring    RecurringRule[]
+
+  @@index([householdId])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  // Amount in whole UZS. Always positive; sign/meaning comes from Category.type.
+  amount    Int
+  date      DateTime
+  note      String?
+  createdAt DateTime @default(now())
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  // If generated from a recurring rule, links back to it.
+  recurringRuleId String?
+  recurringRule   RecurringRule? @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
+
+  @@index([householdId, date])
+  @@index([categoryId])
+}
+
+model Budget {
+  id     String @id @default(cuid())
+  // Month this budget applies to, stored as first day of month (UTC).
+  month  DateTime
+  amount Int
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, month])
+  @@index([householdId, month])
+}
+
+model RecurringRule {
+  id        String   @id @default(cuid())
+  name      String
+  amount    Int
+  // Day of month to post (1-28 recommended).
+  dayOfMonth Int     @default(1)
+  active    Boolean  @default(true)
+  note      String?
+  createdAt DateTime @default(now())
+  // Last month (first-of-month UTC) this rule was materialized for.
+  lastPosted DateTime?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  @@index([householdId])
+}

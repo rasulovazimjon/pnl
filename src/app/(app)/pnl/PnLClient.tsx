@@ -1,0 +1,122 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import { formatNumber } from "@/lib/money";
+import { currentMonthKey } from "@/lib/dates";
+import MonthSwitcher from "@/components/MonthSwitcher";
+
+interface Line {
+  categoryId: string;
+  name: string;
+  actual: number;
+  budget: number | null;
+  variance: number | null;
+}
+interface Statement {
+  monthKey: string;
+  income: Line[];
+  cogs: Line[];
+  expense: Line[];
+  totals: {
+    income: number;
+    cogs: number;
+    grossProfit: number;
+    expense: number;
+    netProfit: number;
+    marginPct: number | null;
+  };
+}
+
+function Section({ title, lines, sign }: { title: string; lines: Line[]; sign: "+" | "−" }) {
+  if (!lines.length) return null;
+  return (
+    <>
+      <tr className="bg-[var(--surface-2)]">
+        <td className="px-4 py-2 font-semibold text-sm" colSpan={4}>{title}</td>
+      </tr>
+      {lines.map((l) => (
+        <tr key={l.categoryId} className="border-t border-[var(--border)]">
+          <td className="px-4 py-2 pl-8">{l.name}</td>
+          <td className="px-4 py-2 text-right tabular-nums">{sign}{formatNumber(l.actual)}</td>
+          <td className="px-4 py-2 text-right tabular-nums text-[var(--muted)]">
+            {l.budget !== null ? formatNumber(l.budget) : "—"}
+          </td>
+          <td className={`px-4 py-2 text-right tabular-nums ${l.variance === null ? "text-[var(--muted)]" : l.variance >= 0 ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
+            {l.variance === null ? "—" : `${l.variance >= 0 ? "+" : "−"}${formatNumber(Math.abs(l.variance))}`}
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+}
+
+function TotalRow({ label, value, strong, positive }: { label: string; value: number; strong?: boolean; positive?: boolean }) {
+  return (
+    <tr className={`border-t-2 border-[var(--border)] ${strong ? "text-base" : "text-sm"}`}>
+      <td className={`px-4 py-2 ${strong ? "font-bold" : "font-semibold"}`}>{label}</td>
+      <td className={`px-4 py-2 text-right tabular-nums ${strong ? "font-bold" : "font-semibold"} ${positive === undefined ? "" : positive ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
+        {formatNumber(value)}
+      </td>
+      <td /><td />
+    </tr>
+  );
+}
+
+export default function PnLClient() {
+  const [month, setMonth] = useState(currentMonthKey());
+  const [stmt, setStmt] = useState<Statement | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    api<{ statement: Statement }>(`/api/pnl?month=${month}`)
+      .then((d) => setStmt(d.statement))
+      .finally(() => setLoading(false));
+  }, [month]);
+
+  const t = stmt?.totals;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">Profit &amp; Loss</h1>
+        <MonthSwitcher value={month} onChange={setMonth} />
+      </div>
+
+      {loading || !stmt ? (
+        <div className="card p-8 text-center text-[var(--muted)]">Loading…</div>
+      ) : (
+        <div className="card overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-[var(--muted)] text-xs uppercase tracking-wide">
+                <th className="px-4 py-3 text-left font-semibold">Line item</th>
+                <th className="px-4 py-3 text-right font-semibold">Actual</th>
+                <th className="px-4 py-3 text-right font-semibold">Budget</th>
+                <th className="px-4 py-3 text-right font-semibold">Variance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <Section title="Revenue" lines={stmt.income} sign="+" />
+              <TotalRow label="Total revenue" value={t!.income} />
+
+              <Section title="Cost of goods sold" lines={stmt.cogs} sign="−" />
+              <TotalRow label="Gross profit" value={t!.grossProfit} positive={t!.grossProfit >= 0} />
+
+              <Section title="Operating expenses" lines={stmt.expense} sign="−" />
+              <TotalRow label="Total expenses" value={t!.expense} />
+
+              <TotalRow label="Net profit" value={t!.netProfit} strong positive={t!.netProfit >= 0} />
+            </tbody>
+          </table>
+          <div className="px-4 py-3 text-sm text-[var(--muted)] border-t border-[var(--border)]">
+            Net margin: {t!.marginPct === null ? "—" : `${t!.marginPct.toFixed(1)}%`}
+            <span className="mx-2">·</span>
+            All figures in UZS. Variance is favorable (green) / unfavorable (red) vs budget.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
