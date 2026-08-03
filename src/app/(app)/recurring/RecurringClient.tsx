@@ -68,7 +68,7 @@ export default function RecurringClient() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{t("rec.title")}</h1>
-      <p className="text-sm text-[var(--muted)]">{t("rec.description")}</p>
+      <p className="text-sm text-[var(--muted-foreground)]">{t("rec.description")}</p>
 
       <form onSubmit={add} className="card p-4 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
         <div className="sm:col-span-4">
@@ -105,18 +105,18 @@ export default function RecurringClient() {
       {error && <p className="text-sm text-[var(--expense)]">{error}</p>}
 
       {loading ? (
-        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
+        <div className="card p-8 text-center text-[var(--muted-foreground)]">{t("common.loading")}</div>
       ) : rules.length === 0 ? (
-        <div className="card p-8 text-center text-[var(--muted)]">{t("rec.none")}</div>
+        <div className="card p-8 text-center text-[var(--muted-foreground)]">{t("rec.none")}</div>
       ) : (
         <div className="card divide-y divide-[var(--border)]">
           {rules.map((r) => (
             <div key={r.id} className="flex items-center gap-3 p-3">
               <div className="flex-1 min-w-0">
-                <div className={`font-medium ${!r.active ? "text-[var(--muted)]" : ""}`}>
+                <div className={`font-medium ${!r.active ? "text-[var(--muted-foreground)]" : ""}`}>
                   {r.name} {!r.active && <span className="text-xs">{t("rec.paused")}</span>}
                 </div>
-                <div className="text-xs text-[var(--muted)]">
+                <div className="text-xs text-[var(--muted-foreground)]">
                   {r.category.name} · {t("rec.dayOf", { day: r.dayOfMonth })}
                 </div>
               </div>

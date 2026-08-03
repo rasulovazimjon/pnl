@@ -128,7 +128,7 @@ export default function TransactionsClient() {
           <option value="">{t("txn.allCategories")}</option>
           {activeCats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
-        <div className="text-sm text-[var(--muted)]">
+        <div className="text-sm text-[var(--muted-foreground)]">
           {t("txn.netFor", { month: monthLabel(month) })}{" "}
           <span className={monthTotal >= 0 ? "text-[var(--income)] font-semibold" : "text-[var(--expense)] font-semibold"}>
             {monthTotal >= 0 ? "+" : "−"}{formatUZS(Math.abs(monthTotal))}
@@ -139,18 +139,18 @@ export default function TransactionsClient() {
       {/* List */}
       <div className="card divide-y divide-[var(--border)]">
         {loading ? (
-          <div className="p-6 text-center text-[var(--muted)]">{t("common.loading")}</div>
+          <div className="p-6 text-center text-[var(--muted-foreground)]">{t("common.loading")}</div>
         ) : txns.length === 0 ? (
-          <div className="p-6 text-center text-[var(--muted)]">{t("txn.none")}</div>
+          <div className="p-6 text-center text-[var(--muted-foreground)]">{t("txn.none")}</div>
         ) : (
           txns.map((x) => (
             <div key={x.id} className="flex items-center gap-3 p-3">
               <div className="flex-1 min-w-0">
                 <div className="font-medium truncate">
                   {x.category.name}
-                  {x.note && <span className="text-[var(--muted)] font-normal"> — {x.note}</span>}
+                  {x.note && <span className="text-[var(--muted-foreground)] font-normal"> — {x.note}</span>}
                 </div>
-                <div className="text-xs text-[var(--muted)]">
+                <div className="text-xs text-[var(--muted-foreground)]">
                   {new Date(x.date).toISOString().slice(0, 10)} · {x.user.name}
                   {x.recurringRuleId && ` · ${t("txn.recurring")}`}
                 </div>

@@ -33,17 +33,17 @@ function Section({ title, lines, sign }: { title: string; lines: Line[]; sign: "
   if (!lines.length) return null;
   return (
     <>
-      <tr className="bg-[var(--surface-2)]">
+      <tr className="bg-[var(--secondary)]">
         <td className="px-4 py-2 font-semibold text-sm" colSpan={4}>{title}</td>
       </tr>
       {lines.map((l) => (
         <tr key={l.categoryId} className="border-t border-[var(--border)]">
           <td className="px-4 py-2 pl-8">{l.name}</td>
           <td className="px-4 py-2 text-right tabular-nums">{sign}{formatNumber(l.actual)}</td>
-          <td className="px-4 py-2 text-right tabular-nums text-[var(--muted)]">
+          <td className="px-4 py-2 text-right tabular-nums text-[var(--muted-foreground)]">
             {l.budget !== null ? formatNumber(l.budget) : "—"}
           </td>
-          <td className={`px-4 py-2 text-right tabular-nums ${l.variance === null ? "text-[var(--muted)]" : l.variance >= 0 ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
+          <td className={`px-4 py-2 text-right tabular-nums ${l.variance === null ? "text-[var(--muted-foreground)]" : l.variance >= 0 ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
             {l.variance === null ? "—" : `${l.variance >= 0 ? "+" : "−"}${formatNumber(Math.abs(l.variance))}`}
           </td>
         </tr>
@@ -87,12 +87,12 @@ export default function PnLClient() {
       </div>
 
       {loading || !stmt ? (
-        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
+        <div className="card p-8 text-center text-[var(--muted-foreground)]">{t("common.loading")}</div>
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-[var(--muted)] text-xs uppercase tracking-wide">
+              <tr className="text-[var(--muted-foreground)] text-xs uppercase tracking-wide">
                 <th className="px-4 py-3 text-left font-semibold">{t("pnl.lineItem")}</th>
                 <th className="px-4 py-3 text-right font-semibold">{t("pnl.actual")}</th>
                 <th className="px-4 py-3 text-right font-semibold">{t("pnl.budget")}</th>
@@ -112,7 +112,7 @@ export default function PnLClient() {
               <TotalRow label={t("pnl.netProfit")} value={tot!.netProfit} strong positive={tot!.netProfit >= 0} />
             </tbody>
           </table>
-          <div className="px-4 py-3 text-sm text-[var(--muted)] border-t border-[var(--border)]">
+          <div className="px-4 py-3 text-sm text-[var(--muted-foreground)] border-t border-[var(--border)]">
             {t("pnl.netMargin")}: {tot!.marginPct === null ? "—" : `${tot!.marginPct.toFixed(1)}%`}
             <span className="mx-2">·</span>
             {t("pnl.footer")}

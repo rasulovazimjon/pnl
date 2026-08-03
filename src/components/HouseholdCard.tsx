@@ -36,7 +36,7 @@ export default function HouseholdCard() {
         <h2 className="font-semibold">{hh.name}</h2>
         <div className="flex gap-1">
           {hh.members.map((m) => (
-            <span key={m.role} className="text-xs px-2 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--muted)]">
+            <span key={m.role} className="text-xs px-2 py-0.5 rounded-full bg-[var(--secondary)] text-[var(--muted-foreground)]">
               {t(`role.${m.role}`)}: {m.name}
             </span>
           ))}
@@ -45,7 +45,7 @@ export default function HouseholdCard() {
 
       {!bothJoined && (
         <div className="mt-3">
-          <p className="text-sm text-[var(--muted)] mb-1">{t("hh.invite")}</p>
+          <p className="text-sm text-[var(--muted-foreground)] mb-1">{t("hh.invite")}</p>
           <div className="flex items-center gap-2">
             <code className="input flex-1 text-xs truncate select-all">{hh.id}</code>
             <button className="btn btn-ghost" onClick={copy}>{copied ? t("hh.copied") : t("hh.copy")}</button>

@@ -29,7 +29,7 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
   }
 
   return (
-    <header className="border-b border-[var(--border)] bg-[var(--surface)] sticky top-0 z-20">
+    <header className="border-b border-[var(--border)] bg-[var(--card)] sticky top-0 z-20">
       <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
         <div className="flex items-center gap-2">
           <span className="font-bold text-[var(--primary)]">₴ P&amp;L</span>
@@ -43,7 +43,7 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
                 key={l.href}
                 href={l.href}
                 className={`px-3 py-1.5 rounded-md text-sm font-medium ${
-                  active ? "bg-[var(--surface-2)] text-[var(--foreground)]" : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  active ? "bg-[var(--secondary)] text-[var(--foreground)]" : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
                 }`}
               >
                 {t(l.key)}
@@ -53,7 +53,7 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
         </nav>
 
         <div className="flex items-center gap-2">
-          <span className="hidden sm:inline text-sm text-[var(--muted)]">{name} · {roleLabel}</span>
+          <span className="hidden sm:inline text-sm text-[var(--muted-foreground)]">{name} · {roleLabel}</span>
           <LanguageSwitcher />
           <button onClick={logout} className="btn btn-ghost text-sm">{t("nav.signOut")}</button>
           <button className="md:hidden btn btn-ghost" onClick={() => setOpen((o) => !o)} aria-label={t("nav.menu")}>☰</button>
@@ -68,7 +68,7 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
               href={l.href}
               onClick={() => setOpen(false)}
               className={`px-3 py-2 rounded-md text-sm font-medium ${
-                pathname === l.href ? "bg-[var(--surface-2)]" : "text-[var(--muted)]"
+                pathname === l.href ? "bg-[var(--secondary)]" : "text-[var(--muted-foreground)]"
               }`}
             >
               {t(l.key)}

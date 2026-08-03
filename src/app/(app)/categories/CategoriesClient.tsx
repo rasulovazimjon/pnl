@@ -66,7 +66,7 @@ export default function CategoriesClient() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">{t("cat.title")}</h1>
-        <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
+        <label className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
           <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
           {t("cat.showArchived")}
         </label>
@@ -89,7 +89,7 @@ export default function CategoriesClient() {
       {error && <p className="text-sm text-[var(--expense)]">{error}</p>}
 
       {loading ? (
-        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
+        <div className="card p-8 text-center text-[var(--muted-foreground)]">{t("common.loading")}</div>
       ) : (
         <div className="space-y-5">
           {TYPES.map((ty) => {
@@ -97,11 +97,11 @@ export default function CategoriesClient() {
             if (!group.length) return null;
             return (
               <div key={ty.value} className="card">
-                <div className="px-4 py-2 bg-[var(--surface-2)] font-semibold text-sm rounded-t-xl">{t(ty.labelKey)}</div>
+                <div className="px-4 py-2 bg-[var(--secondary)] font-semibold text-sm rounded-t-xl">{t(ty.labelKey)}</div>
                 <div className="divide-y divide-[var(--border)]">
                   {group.map((c) => (
                     <div key={c.id} className="flex items-center gap-2 px-4 py-2.5">
-                      <span className={`flex-1 ${c.archived ? "text-[var(--muted)] line-through" : ""}`}>{c.name}</span>
+                      <span className={`flex-1 ${c.archived ? "text-[var(--muted-foreground)] line-through" : ""}`}>{c.name}</span>
                       <button className="btn btn-ghost text-xs" onClick={() => rename(c)}>{t("common.rename")}</button>
                       <button className="btn btn-ghost text-xs" onClick={() => toggleArchive(c)}>{c.archived ? t("cat.unarchive") : t("cat.archive")}</button>
                       <button className="btn btn-danger text-xs" onClick={() => remove(c)}>{t("common.delete")}</button>

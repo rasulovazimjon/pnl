@@ -1,47 +1,141 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens follow the shadcn/ui schema (semantic background/foreground
+ * pairs, OKLCH colors, a single --radius source of truth). Base color: Neutral.
+ * Finance-specific tokens (--income, --expense) are added as extensions.
+ * Light is the default; dark is applied automatically via prefers-color-scheme
+ * and can also be forced with a `.dark` class.
+ */
+
 :root {
-  --background: #f6f7f9;
-  --surface: #ffffff;
-  --surface-2: #f1f3f5;
-  --foreground: #14181f;
-  --muted: #667085;
-  --border: #e4e7ec;
-  --primary: #1f6feb;
-  --primary-fg: #ffffff;
-  --income: #1a7f4b;
-  --expense: #c23b3b;
-  --accent: #7c5cff;
+  --radius: 0.625rem;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Finance semantic extensions */
+  --income: oklch(0.58 0.13 155);
+  --expense: oklch(0.577 0.245 27.325);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.269 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.371 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.985 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+
+    --income: oklch(0.72 0.16 156);
+    --expense: oklch(0.704 0.191 22.216);
+  }
+}
+
+/* Explicit dark override (for a future theme toggle). */
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.371 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --income: oklch(0.72 0.16 156);
+  --expense: oklch(0.704 0.191 22.216);
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-income: var(--income);
   --color-expense: var(--expense);
-  --color-accent: var(--accent);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0d1117;
-    --surface: #161b22;
-    --surface-2: #1c2230;
-    --foreground: #e6edf3;
-    --muted: #8b949e;
-    --border: #2a313c;
-    --primary: #4c8dff;
-    --income: #3fb950;
-    --expense: #f0616d;
-    --accent: #a78bfa;
-  }
+  /* Radius scale derived from a single --radius source of truth. */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
 }
 
 body {
@@ -50,43 +144,56 @@ body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
+/* --- shadcn-styled component primitives --- */
 @layer components {
   .card {
-    background: var(--surface);
+    background: var(--card);
+    color: var(--card-foreground);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
+    border-radius: var(--radius-md);
+    font-weight: 500;
     font-size: 0.875rem;
-    padding: 0.5rem 0.9rem;
+    line-height: 1.25rem;
+    padding: 0.5rem 1rem;
     cursor: pointer;
-    transition: opacity 0.15s, background 0.15s;
+    transition: background-color 0.15s, color 0.15s, opacity 0.15s, box-shadow 0.15s;
     border: 1px solid transparent;
     white-space: nowrap;
-  }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-primary { background: var(--primary); color: var(--primary-fg); }
-  .btn-primary:hover:not(:disabled) { opacity: 0.9; }
-  .btn-ghost { background: transparent; border-color: var(--border); color: var(--foreground); }
-  .btn-ghost:hover:not(:disabled) { background: var(--surface-2); }
-  .btn-danger { background: transparent; border-color: var(--border); color: var(--expense); }
-  .btn-danger:hover:not(:disabled) { background: var(--surface-2); }
-  .input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 0.55rem 0.7rem;
-    font-size: 0.9rem;
-    color: var(--foreground);
     outline: none;
   }
-  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent); }
-  .label { font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.3rem; display: block; }
+  .btn:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+  .btn-primary:hover:not(:disabled) { background: color-mix(in oklch, var(--primary) 90%, transparent); }
+  .btn-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+  .btn-secondary:hover:not(:disabled) { background: color-mix(in oklch, var(--secondary) 80%, transparent); }
+  .btn-ghost { background: transparent; color: var(--foreground); }
+  .btn-ghost:hover:not(:disabled) { background: var(--accent); color: var(--accent-foreground); }
+  .btn-outline { background: var(--background); border-color: var(--input); color: var(--foreground); }
+  .btn-outline:hover:not(:disabled) { background: var(--accent); color: var(--accent-foreground); }
+  .btn-danger { background: transparent; border-color: var(--input); color: var(--destructive); }
+  .btn-danger:hover:not(:disabled) { background: color-mix(in oklch, var(--destructive) 12%, transparent); }
+  .input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--input);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--foreground);
+    outline: none;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .input::placeholder { color: var(--muted-foreground); }
+  .input:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent); }
+  .label { font-size: 0.8rem; font-weight: 500; color: var(--foreground); margin-bottom: 0.4rem; display: block; }
 }

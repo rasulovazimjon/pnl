@@ -62,7 +62,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
             <h1 className="text-xl font-bold">
               {mode === "login" ? t("auth.signInTitle") : t("auth.createTitle")}
             </h1>
-            <p className="text-sm text-[var(--muted)] mt-1">{t("auth.tagline")}</p>
+            <p className="text-sm text-[var(--muted-foreground)] mt-1">{t("auth.tagline")}</p>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-3">
@@ -105,7 +105,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
                 <div>
                   <label className="label">{t("auth.joinCodeLabel")}</label>
                   <input name="householdId" className="input" placeholder={t("auth.joinCodePlaceholder")} />
-                  <p className="text-xs text-[var(--muted)] mt-1">{t("auth.joinCodeHelp")}</p>
+                  <p className="text-xs text-[var(--muted-foreground)] mt-1">{t("auth.joinCodeHelp")}</p>
                 </div>
               </>
             )}
@@ -117,7 +117,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
             </button>
           </form>
 
-          <p className="text-sm text-[var(--muted)] mt-4 text-center">
+          <p className="text-sm text-[var(--muted-foreground)] mt-4 text-center">
             {mode === "login" ? (
               <>{t("auth.newHere")} <Link href="/register" className="text-[var(--primary)] font-medium">{t("auth.createOne")}</Link></>
             ) : (

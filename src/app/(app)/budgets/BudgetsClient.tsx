@@ -70,20 +70,20 @@ export default function BudgetsClient() {
         <h1 className="text-2xl font-bold">{t("bud.title")}</h1>
         <MonthSwitcher value={month} onChange={setMonth} />
       </div>
-      <p className="text-sm text-[var(--muted)]">{t("bud.description")}</p>
+      <p className="text-sm text-[var(--muted-foreground)]">{t("bud.description")}</p>
 
       {loading ? (
-        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
+        <div className="card p-8 text-center text-[var(--muted-foreground)]">{t("common.loading")}</div>
       ) : (
         groups.map((g) => {
           const group = lines.filter((l) => l.type === g.key);
           if (!group.length) return null;
           return (
             <div key={g.key} className="card overflow-x-auto">
-              <div className="px-4 py-2 bg-[var(--surface-2)] font-semibold text-sm">{g.title}</div>
+              <div className="px-4 py-2 bg-[var(--secondary)] font-semibold text-sm">{g.title}</div>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-[var(--muted)] text-xs uppercase">
+                  <tr className="text-[var(--muted-foreground)] text-xs uppercase">
                     <th className="px-4 py-2 text-left font-semibold">{t("txn.category")}</th>
                     <th className="px-4 py-2 text-right font-semibold">{t("pnl.actual")}</th>
                     <th className="px-4 py-2 text-right font-semibold">{t("bud.budget")}</th>
@@ -108,7 +108,7 @@ export default function BudgetsClient() {
                             onChange={(e) => setDrafts((d) => ({ ...d, [l.categoryId]: e.target.value }))}
                           />
                         </td>
-                        <td className={`px-4 py-2 text-right tabular-nums ${variance === null ? "text-[var(--muted)]" : variance >= 0 ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
+                        <td className={`px-4 py-2 text-right tabular-nums ${variance === null ? "text-[var(--muted-foreground)]" : variance >= 0 ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
                           {variance === null ? "—" : `${variance >= 0 ? "+" : "−"}${formatNumber(Math.abs(variance))}`}
                         </td>
                         <td className="px-4 py-2 text-right">
