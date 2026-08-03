@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { formatNumber } from "@/lib/money";
 import { currentMonthKey } from "@/lib/dates";
 import MonthSwitcher from "@/components/MonthSwitcher";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface Line {
   categoryId: string;
@@ -64,6 +65,7 @@ function TotalRow({ label, value, strong, positive }: { label: string; value: nu
 }
 
 export default function PnLClient() {
+  const { t } = useLanguage();
   const [month, setMonth] = useState(currentMonthKey());
   const [stmt, setStmt] = useState<Statement | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,45 +77,45 @@ export default function PnLClient() {
       .finally(() => setLoading(false));
   }, [month]);
 
-  const t = stmt?.totals;
+  const tot = stmt?.totals;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">Profit &amp; Loss</h1>
+        <h1 className="text-2xl font-bold">{t("pnl.title")}</h1>
         <MonthSwitcher value={month} onChange={setMonth} />
       </div>
 
       {loading || !stmt ? (
-        <div className="card p-8 text-center text-[var(--muted)]">Loading…</div>
+        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-[var(--muted)] text-xs uppercase tracking-wide">
-                <th className="px-4 py-3 text-left font-semibold">Line item</th>
-                <th className="px-4 py-3 text-right font-semibold">Actual</th>
-                <th className="px-4 py-3 text-right font-semibold">Budget</th>
-                <th className="px-4 py-3 text-right font-semibold">Variance</th>
+                <th className="px-4 py-3 text-left font-semibold">{t("pnl.lineItem")}</th>
+                <th className="px-4 py-3 text-right font-semibold">{t("pnl.actual")}</th>
+                <th className="px-4 py-3 text-right font-semibold">{t("pnl.budget")}</th>
+                <th className="px-4 py-3 text-right font-semibold">{t("pnl.variance")}</th>
               </tr>
             </thead>
             <tbody>
-              <Section title="Revenue" lines={stmt.income} sign="+" />
-              <TotalRow label="Total revenue" value={t!.income} />
+              <Section title={t("pnl.revenue")} lines={stmt.income} sign="+" />
+              <TotalRow label={t("pnl.totalRevenue")} value={tot!.income} />
 
-              <Section title="Cost of goods sold" lines={stmt.cogs} sign="−" />
-              <TotalRow label="Gross profit" value={t!.grossProfit} positive={t!.grossProfit >= 0} />
+              <Section title={t("type.cogsFull")} lines={stmt.cogs} sign="−" />
+              <TotalRow label={t("pnl.grossProfit")} value={tot!.grossProfit} positive={tot!.grossProfit >= 0} />
 
-              <Section title="Operating expenses" lines={stmt.expense} sign="−" />
-              <TotalRow label="Total expenses" value={t!.expense} />
+              <Section title={t("pnl.operatingExpenses")} lines={stmt.expense} sign="−" />
+              <TotalRow label={t("pnl.totalExpenses")} value={tot!.expense} />
 
-              <TotalRow label="Net profit" value={t!.netProfit} strong positive={t!.netProfit >= 0} />
+              <TotalRow label={t("pnl.netProfit")} value={tot!.netProfit} strong positive={tot!.netProfit >= 0} />
             </tbody>
           </table>
           <div className="px-4 py-3 text-sm text-[var(--muted)] border-t border-[var(--border)]">
-            Net margin: {t!.marginPct === null ? "—" : `${t!.marginPct.toFixed(1)}%`}
+            {t("pnl.netMargin")}: {tot!.marginPct === null ? "—" : `${tot!.marginPct.toFixed(1)}%`}
             <span className="mx-2">·</span>
-            All figures in UZS. Variance is favorable (green) / unfavorable (red) vs budget.
+            {t("pnl.footer")}
           </div>
         </div>
       )}

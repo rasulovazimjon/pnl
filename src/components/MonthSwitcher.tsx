@@ -1,6 +1,7 @@
 "use client";
 
-import { monthLabel, shiftMonth } from "@/lib/dates";
+import { shiftMonth } from "@/lib/dates";
+import { useLanguage } from "./LanguageProvider";
 
 export default function MonthSwitcher({
   value,
@@ -9,6 +10,7 @@ export default function MonthSwitcher({
   value: string;
   onChange: (key: string) => void;
 }) {
+  const { monthLabel } = useLanguage();
   return (
     <div className="flex items-center gap-2">
       <button className="btn btn-ghost" onClick={() => onChange(shiftMonth(value, -1))} aria-label="Previous month">

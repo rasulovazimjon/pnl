@@ -4,11 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import { formatNumber, parseAmount } from "@/lib/money";
 import type { Category, RecurringRule, CategoryType } from "@/lib/types";
+import { useLanguage } from "@/components/LanguageProvider";
 
 const TYPE_ORDER: CategoryType[] = ["INCOME", "COGS", "EXPENSE"];
-const TYPE_LABELS: Record<CategoryType, string> = { INCOME: "Income", COGS: "Cost of goods", EXPENSE: "Expenses" };
+const TYPE_KEYS: Record<CategoryType, string> = { INCOME: "type.income", COGS: "type.cogs", EXPENSE: "type.expenses" };
 
 export default function RecurringClient() {
+  const { t } = useLanguage();
   const [rules, setRules] = useState<RecurringRule[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,10 +42,10 @@ export default function RecurringClient() {
     setError(null);
     const amt = parseAmount(amount);
     const day = parseInt(dayOfMonth, 10);
-    if (!name.trim()) { setError("Enter a name"); return; }
-    if (amt === null || amt <= 0) { setError("Enter a valid amount"); return; }
-    if (!categoryId) { setError("Pick a category"); return; }
-    if (!(day >= 1 && day <= 28)) { setError("Day must be 1–28"); return; }
+    if (!name.trim()) { setError(t("rec.errName")); return; }
+    if (amt === null || amt <= 0) { setError(t("txn.errAmount")); return; }
+    if (!categoryId) { setError(t("txn.errCategory")); return; }
+    if (!(day >= 1 && day <= 28)) { setError(t("rec.errDay")); return; }
     setSaving(true);
     try {
       await api("/api/recurring", { method: "POST", json: { name, amount: amt, categoryId, dayOfMonth: day } });
@@ -58,35 +60,33 @@ export default function RecurringClient() {
     load();
   }
   async function remove(r: RecurringRule) {
-    if (!confirm(`Delete recurring rule "${r.name}"? Past posted transactions are kept.`)) return;
+    if (!confirm(t("rec.confirmDelete", { name: r.name }))) return;
     await api(`/api/recurring/${r.id}`, { method: "DELETE" });
     load();
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Recurring transactions</h1>
-      <p className="text-sm text-[var(--muted)]">
-        Fixed monthly items (rent, salary, subscriptions). These post automatically each month on the chosen day.
-      </p>
+      <h1 className="text-2xl font-bold">{t("rec.title")}</h1>
+      <p className="text-sm text-[var(--muted)]">{t("rec.description")}</p>
 
       <form onSubmit={add} className="card p-4 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
         <div className="sm:col-span-4">
-          <label className="label">Name</label>
-          <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Apartment rent" />
+          <label className="label">{t("rec.name")}</label>
+          <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("rec.namePlaceholder")} />
         </div>
         <div className="sm:col-span-3">
-          <label className="label">Amount (UZS)</label>
+          <label className="label">{t("txn.amount")}</label>
           <input className="input" inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="4 000 000" />
         </div>
         <div className="sm:col-span-3">
-          <label className="label">Category</label>
+          <label className="label">{t("txn.category")}</label>
           <select className="input" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
             {TYPE_ORDER.map((type) => {
               const cats = activeCats.filter((c) => c.type === type);
               if (!cats.length) return null;
               return (
-                <optgroup key={type} label={TYPE_LABELS[type]}>
+                <optgroup key={type} label={t(TYPE_KEYS[type])}>
                   {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </optgroup>
               );
@@ -94,37 +94,37 @@ export default function RecurringClient() {
           </select>
         </div>
         <div className="sm:col-span-1">
-          <label className="label">Day</label>
+          <label className="label">{t("rec.day")}</label>
           <input className="input" inputMode="numeric" value={dayOfMonth} onChange={(e) => setDayOfMonth(e.target.value)} />
         </div>
         <div className="sm:col-span-1">
-          <button className="btn btn-primary w-full" disabled={saving}>{saving ? "…" : "Add"}</button>
+          <button className="btn btn-primary w-full" disabled={saving}>{saving ? "…" : t("common.add")}</button>
         </div>
       </form>
 
       {error && <p className="text-sm text-[var(--expense)]">{error}</p>}
 
       {loading ? (
-        <div className="card p-8 text-center text-[var(--muted)]">Loading…</div>
+        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
       ) : rules.length === 0 ? (
-        <div className="card p-8 text-center text-[var(--muted)]">No recurring rules yet.</div>
+        <div className="card p-8 text-center text-[var(--muted)]">{t("rec.none")}</div>
       ) : (
         <div className="card divide-y divide-[var(--border)]">
           {rules.map((r) => (
             <div key={r.id} className="flex items-center gap-3 p-3">
               <div className="flex-1 min-w-0">
                 <div className={`font-medium ${!r.active ? "text-[var(--muted)]" : ""}`}>
-                  {r.name} {!r.active && <span className="text-xs">(paused)</span>}
+                  {r.name} {!r.active && <span className="text-xs">{t("rec.paused")}</span>}
                 </div>
                 <div className="text-xs text-[var(--muted)]">
-                  {r.category.name} · day {r.dayOfMonth} of each month
+                  {r.category.name} · {t("rec.dayOf", { day: r.dayOfMonth })}
                 </div>
               </div>
               <div className={`font-semibold tabular-nums ${r.category.type === "INCOME" ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
                 {r.category.type === "INCOME" ? "+" : "−"}{formatNumber(r.amount)}
               </div>
-              <button className="btn btn-ghost text-xs" onClick={() => toggle(r)}>{r.active ? "Pause" : "Resume"}</button>
-              <button className="btn btn-danger text-xs" onClick={() => remove(r)}>Delete</button>
+              <button className="btn btn-ghost text-xs" onClick={() => toggle(r)}>{r.active ? t("rec.pause") : t("rec.resume")}</button>
+              <button className="btn btn-danger text-xs" onClick={() => remove(r)}>{t("common.delete")}</button>
             </div>
           ))}
         </div>

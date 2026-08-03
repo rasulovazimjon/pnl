@@ -7,9 +7,10 @@ import {
 } from "recharts";
 import { api } from "@/lib/api";
 import { formatUZS, formatNumber } from "@/lib/money";
-import { currentMonthKey, monthLabel } from "@/lib/dates";
+import { currentMonthKey } from "@/lib/dates";
 import MonthSwitcher from "@/components/MonthSwitcher";
 import HouseholdCard from "@/components/HouseholdCard";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface Data {
   month: string;
@@ -32,6 +33,7 @@ function Kpi({ label, value, tone }: { label: string; value: number; tone?: "inc
 }
 
 export default function DashboardClient() {
+  const { t, monthLabel, monthShort } = useLanguage();
   const [month, setMonth] = useState(currentMonthKey());
   const [data, setData] = useState<Data | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,30 +43,30 @@ export default function DashboardClient() {
     api<Data>(`/api/dashboard?month=${month}`).then(setData).finally(() => setLoading(false));
   }, [month]);
 
-  const trendData = data?.trend.map((d) => ({ ...d, label: monthLabel(d.monthKey).split(" ")[0].slice(0, 3) })) ?? [];
+  const trendData = data?.trend.map((d) => ({ ...d, label: monthShort(d.monthKey) })) ?? [];
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">{t("dash.title")}</h1>
         <div className="flex items-center gap-3">
           <MonthSwitcher value={month} onChange={setMonth} />
-          <Link href="/transactions" className="btn btn-primary">+ Add transaction</Link>
+          <Link href="/transactions" className="btn btn-primary">{t("dash.addTransaction")}</Link>
         </div>
       </div>
 
       {loading || !data ? (
-        <div className="card p-8 text-center text-[var(--muted)]">Loading…</div>
+        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
       ) : (
         <>
           <HouseholdCard />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <Kpi label="Income" value={data.totals.income} tone="income" />
-            <Kpi label="Expenses" value={data.totals.cogs + data.totals.expense} tone="expense" />
-            <Kpi label="Net profit" value={data.totals.netProfit} tone="net" />
+            <Kpi label={t("dash.income")} value={data.totals.income} tone="income" />
+            <Kpi label={t("dash.expenses")} value={data.totals.cogs + data.totals.expense} tone="expense" />
+            <Kpi label={t("dash.netProfit")} value={data.totals.netProfit} tone="net" />
             <div className="card p-4">
-              <div className="text-xs uppercase tracking-wide text-[var(--muted)]">Net margin</div>
+              <div className="text-xs uppercase tracking-wide text-[var(--muted)]">{t("dash.netMargin")}</div>
               <div className="text-xl font-bold mt-1 tabular-nums">
                 {data.totals.marginPct === null ? "—" : `${data.totals.marginPct.toFixed(1)}%`}
               </div>
@@ -73,7 +75,7 @@ export default function DashboardClient() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="card p-4">
-              <h2 className="font-semibold mb-3">Net profit — last 6 months</h2>
+              <h2 className="font-semibold mb-3">{t("dash.netProfit6mo")}</h2>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={trendData} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
@@ -95,9 +97,9 @@ export default function DashboardClient() {
             </div>
 
             <div className="card p-4">
-              <h2 className="font-semibold mb-3">Top expenses — {monthLabel(month)}</h2>
+              <h2 className="font-semibold mb-3">{t("dash.topExpenses", { month: monthLabel(month) })}</h2>
               {data.topExpenses.length === 0 ? (
-                <p className="text-sm text-[var(--muted)]">No expenses recorded yet.</p>
+                <p className="text-sm text-[var(--muted)]">{t("dash.noExpenses")}</p>
               ) : (
                 <ul className="space-y-2">
                   {data.topExpenses.map((e) => {
@@ -116,7 +118,7 @@ export default function DashboardClient() {
                   })}
                 </ul>
               )}
-              <Link href="/pnl" className="btn btn-ghost w-full mt-4">View full P&amp;L →</Link>
+              <Link href="/pnl" className="btn btn-ghost w-full mt-4">{t("dash.viewFullPnl")}</Link>
             </div>
           </div>
         </>

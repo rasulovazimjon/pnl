@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { formatNumber, parseAmount } from "@/lib/money";
 import { currentMonthKey } from "@/lib/dates";
 import MonthSwitcher from "@/components/MonthSwitcher";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface Line {
   categoryId: string;
@@ -19,6 +20,7 @@ interface Statement {
 }
 
 export default function BudgetsClient() {
+  const { t } = useLanguage();
   const [month, setMonth] = useState(currentMonthKey());
   const [lines, setLines] = useState<Line[]>([]);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -57,23 +59,21 @@ export default function BudgetsClient() {
   }
 
   const groups: { key: Line["type"]; title: string }[] = [
-    { key: "INCOME", title: "Income targets" },
-    { key: "COGS", title: "Cost of goods sold" },
-    { key: "EXPENSE", title: "Operating expenses" },
+    { key: "INCOME", title: t("bud.incomeTargets") },
+    { key: "COGS", title: t("type.cogsFull") },
+    { key: "EXPENSE", title: t("pnl.operatingExpenses") },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">Budgets</h1>
+        <h1 className="text-2xl font-bold">{t("bud.title")}</h1>
         <MonthSwitcher value={month} onChange={setMonth} />
       </div>
-      <p className="text-sm text-[var(--muted)]">
-        Set a monthly target per category. Green variance = under budget (or above income target); red = over.
-      </p>
+      <p className="text-sm text-[var(--muted)]">{t("bud.description")}</p>
 
       {loading ? (
-        <div className="card p-8 text-center text-[var(--muted)]">Loading…</div>
+        <div className="card p-8 text-center text-[var(--muted)]">{t("common.loading")}</div>
       ) : (
         groups.map((g) => {
           const group = lines.filter((l) => l.type === g.key);
@@ -84,10 +84,10 @@ export default function BudgetsClient() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-[var(--muted)] text-xs uppercase">
-                    <th className="px-4 py-2 text-left font-semibold">Category</th>
-                    <th className="px-4 py-2 text-right font-semibold">Actual</th>
-                    <th className="px-4 py-2 text-right font-semibold">Budget (UZS)</th>
-                    <th className="px-4 py-2 text-right font-semibold">Variance</th>
+                    <th className="px-4 py-2 text-left font-semibold">{t("txn.category")}</th>
+                    <th className="px-4 py-2 text-right font-semibold">{t("pnl.actual")}</th>
+                    <th className="px-4 py-2 text-right font-semibold">{t("bud.budget")}</th>
+                    <th className="px-4 py-2 text-right font-semibold">{t("pnl.variance")}</th>
                     <th className="px-4 py-2"></th>
                   </tr>
                 </thead>
@@ -113,7 +113,7 @@ export default function BudgetsClient() {
                         </td>
                         <td className="px-4 py-2 text-right">
                           <button className="btn btn-ghost text-xs" onClick={() => save(l)} disabled={savingId === l.categoryId}>
-                            {savingId === l.categoryId ? "…" : "Save"}
+                            {savingId === l.categoryId ? "…" : t("common.save")}
                           </button>
                         </td>
                       </tr>

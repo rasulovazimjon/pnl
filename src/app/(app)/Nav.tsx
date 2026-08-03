@@ -3,18 +3,21 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const LINKS = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/transactions", label: "Transactions" },
-  { href: "/pnl", label: "P&L" },
-  { href: "/budgets", label: "Budgets" },
-  { href: "/recurring", label: "Recurring" },
-  { href: "/categories", label: "Categories" },
+  { href: "/dashboard", key: "nav.dashboard" },
+  { href: "/transactions", key: "nav.transactions" },
+  { href: "/pnl", key: "nav.pnl" },
+  { href: "/budgets", key: "nav.budgets" },
+  { href: "/recurring", key: "nav.recurring" },
+  { href: "/categories", key: "nav.categories" },
 ];
 
 export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "WIFE" }) {
-  const roleLabel = role === "WIFE" ? "Wife" : "Husband";
+  const { t } = useLanguage();
+  const roleLabel = t(`role.${role}`);
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -43,7 +46,7 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
                   active ? "bg-[var(--surface-2)] text-[var(--foreground)]" : "text-[var(--muted)] hover:text-[var(--foreground)]"
                 }`}
               >
-                {l.label}
+                {t(l.key)}
               </Link>
             );
           })}
@@ -51,8 +54,9 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
 
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline text-sm text-[var(--muted)]">{name} · {roleLabel}</span>
-          <button onClick={logout} className="btn btn-ghost text-sm">Sign out</button>
-          <button className="md:hidden btn btn-ghost" onClick={() => setOpen((o) => !o)} aria-label="Menu">☰</button>
+          <LanguageSwitcher />
+          <button onClick={logout} className="btn btn-ghost text-sm">{t("nav.signOut")}</button>
+          <button className="md:hidden btn btn-ghost" onClick={() => setOpen((o) => !o)} aria-label={t("nav.menu")}>☰</button>
         </div>
       </div>
 
@@ -67,7 +71,7 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
                 pathname === l.href ? "bg-[var(--surface-2)]" : "text-[var(--muted)]"
               }`}
             >
-              {l.label}
+              {t(l.key)}
             </Link>
           ))}
         </nav>
