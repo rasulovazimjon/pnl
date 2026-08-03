@@ -1,7 +1,7 @@
 // Personal PnL — data model
-// Local dev uses SQLite. To deploy on Supabase/Postgres, change:
-//   provider = "postgresql"
-// and set DATABASE_URL to the Supabase connection string. No other change needed.
+// Postgres (Supabase). DATABASE_URL is the transaction-mode pooler (port 6543)
+// used by the app at runtime; DIRECT_URL is the session-mode pooler (port 5432)
+// used by Prisma for migrations / db push.
 // Amounts are stored as INTEGER minor-less UZS (so'm has no decimal subunit).
 
 generator client {
@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Household {
