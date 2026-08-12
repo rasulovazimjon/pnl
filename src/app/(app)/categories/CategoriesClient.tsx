@@ -19,7 +19,7 @@ const SECTIONS: { labelKey: string; match: (t: CategoryType) => boolean }[] = [
 ];
 
 export default function CategoriesClient() {
-  const { t } = useLanguage();
+  const { t, catName } = useLanguage();
   const [cats, setCats] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +62,7 @@ export default function CategoriesClient() {
   }
 
   async function remove(c: Category) {
-    if (!confirm(t("cat.confirmDelete", { name: c.name }))) return;
+    if (!confirm(t("cat.confirmDelete", { name: catName(c.name) }))) return;
     await api(`/api/categories/${c.id}`, { method: "DELETE" });
     load();
   }
@@ -108,7 +108,7 @@ export default function CategoriesClient() {
                 <div className="divide-y divide-[var(--border)]">
                   {group.map((c) => (
                     <div key={c.id} className="flex items-center gap-2 px-4 py-2.5">
-                      <span className={`flex-1 ${c.archived ? "text-[var(--muted-foreground)] line-through" : ""}`}>{c.name}</span>
+                      <span className={`flex-1 ${c.archived ? "text-[var(--muted-foreground)] line-through" : ""}`}>{catName(c.name)}</span>
                       <button className="btn btn-ghost text-xs" onClick={() => rename(c)}>{t("common.rename")}</button>
                       <button className="btn btn-ghost text-xs" onClick={() => toggleArchive(c)}>{c.archived ? t("cat.unarchive") : t("cat.archive")}</button>
                       <button className="btn btn-danger text-xs" onClick={() => remove(c)}>{t("common.delete")}</button>

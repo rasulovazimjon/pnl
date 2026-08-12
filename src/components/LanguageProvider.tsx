@@ -8,6 +8,7 @@ import {
   translate,
   monthLabelIntl,
   monthShort,
+  localizeCategoryName,
 } from "@/lib/i18n";
 
 interface LanguageContextValue {
@@ -16,6 +17,7 @@ interface LanguageContextValue {
   t: (key: string, params?: Record<string, string | number>) => string;
   monthLabel: (key: string) => string;
   monthShort: (key: string) => string;
+  catName: (name: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -42,6 +44,7 @@ export function LanguageProvider({
       t: (key, params) => translate(locale, key, params),
       monthLabel: (key) => monthLabelIntl(locale, key),
       monthShort: (key) => monthShort(locale, key),
+      catName: (name) => localizeCategoryName(locale, name),
     }),
     [locale, setLocale],
   );
@@ -59,6 +62,7 @@ export function useLanguage(): LanguageContextValue {
       t: (key, params) => translate(DEFAULT_LOCALE, key, params),
       monthLabel: (key) => monthLabelIntl(DEFAULT_LOCALE, key),
       monthShort: (key) => monthShort(DEFAULT_LOCALE, key),
+      catName: (name) => localizeCategoryName(DEFAULT_LOCALE, name),
     };
   }
   return ctx;

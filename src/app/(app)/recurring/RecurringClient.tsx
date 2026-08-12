@@ -12,7 +12,7 @@ const CAT_GROUPS: { labelKey: string; match: (t: CategoryType) => boolean }[] = 
 ];
 
 export default function RecurringClient() {
-  const { t } = useLanguage();
+  const { t, catName } = useLanguage();
   const [rules, setRules] = useState<RecurringRule[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ export default function RecurringClient() {
               if (!cats.length) return null;
               return (
                 <optgroup key={g.labelKey} label={t(g.labelKey)}>
-                  {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {cats.map((c) => <option key={c.id} value={c.id}>{catName(c.name)}</option>)}
                 </optgroup>
               );
             })}
@@ -119,7 +119,7 @@ export default function RecurringClient() {
                   {r.name} {!r.active && <span className="text-xs">{t("rec.paused")}</span>}
                 </div>
                 <div className="text-xs text-[var(--muted-foreground)]">
-                  {r.category.name} · {t("rec.dayOf", { day: r.dayOfMonth })}
+                  {catName(r.category.name)} · {t("rec.dayOf", { day: r.dayOfMonth })}
                 </div>
               </div>
               <div className={`font-semibold tabular-nums ${r.category.type === "INCOME" ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>

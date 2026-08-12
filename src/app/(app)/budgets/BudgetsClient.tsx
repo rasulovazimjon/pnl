@@ -20,7 +20,7 @@ interface Statement {
 }
 
 export default function BudgetsClient() {
-  const { t } = useLanguage();
+  const { t, catName } = useLanguage();
   const [month, setMonth] = useState(currentMonthKey());
   const [lines, setLines] = useState<Line[]>([]);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -96,7 +96,7 @@ export default function BudgetsClient() {
                     const variance = draftAmt > 0 ? (l.type === "INCOME" ? l.actual - draftAmt : draftAmt - l.actual) : null;
                     return (
                       <tr key={l.categoryId} className="border-t border-[var(--border)]">
-                        <td className="px-4 py-2">{l.name}</td>
+                        <td className="px-4 py-2">{catName(l.name)}</td>
                         <td className="px-4 py-2 text-right tabular-nums">{formatNumber(l.actual)}</td>
                         <td className="px-4 py-2 text-right">
                           <input

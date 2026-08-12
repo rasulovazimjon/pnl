@@ -33,7 +33,7 @@ function Kpi({ label, value, tone }: { label: string; value: number; tone?: "inc
 }
 
 export default function DashboardClient() {
-  const { t, monthLabel, monthShort } = useLanguage();
+  const { t, monthLabel, monthShort, catName } = useLanguage();
   const [month, setMonth] = useState(currentMonthKey());
   const [data, setData] = useState<Data | null>(null);
   const [loading, setLoading] = useState(true);
@@ -107,7 +107,7 @@ export default function DashboardClient() {
                     return (
                       <li key={e.name}>
                         <div className="flex justify-between text-sm mb-1">
-                          <span>{e.name}</span>
+                          <span>{catName(e.name)}</span>
                           <span className="tabular-nums font-medium">{formatNumber(e.amount)}</span>
                         </div>
                         <div className="h-2 rounded-full bg-[var(--secondary)] overflow-hidden">

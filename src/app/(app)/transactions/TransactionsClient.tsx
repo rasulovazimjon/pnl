@@ -16,7 +16,7 @@ const CAT_GROUPS: { labelKey: string; match: (t: CategoryType) => boolean }[] = 
 ];
 
 export default function TransactionsClient() {
-  const { t, monthLabel } = useLanguage();
+  const { t, monthLabel, catName } = useLanguage();
   const [month, setMonth] = useState(currentMonthKey());
   const [categories, setCategories] = useState<Category[]>([]);
   const [txns, setTxns] = useState<Transaction[]>([]);
@@ -145,7 +145,7 @@ export default function TransactionsClient() {
               return (
                 <optgroup key={g.labelKey} label={t(g.labelKey)}>
                   {cats.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                    <option key={c.id} value={c.id}>{catName(c.name)}</option>
                   ))}
                 </optgroup>
               );
@@ -171,7 +171,7 @@ export default function TransactionsClient() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <select className="input max-w-xs" value={filterCat} onChange={(e) => setFilterCat(e.target.value)}>
           <option value="">{t("txn.allCategories")}</option>
-          {activeCats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          {activeCats.map((c) => <option key={c.id} value={c.id}>{catName(c.name)}</option>)}
         </select>
         <div className="text-sm text-[var(--muted-foreground)]">
           {t("txn.netFor", { month: monthLabel(month) })}{" "}
@@ -204,7 +204,7 @@ export default function TransactionsClient() {
                       if (!cats.length) return null;
                       return (
                         <optgroup key={g.labelKey} label={t(g.labelKey)}>
-                          {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                          {cats.map((c) => <option key={c.id} value={c.id}>{catName(c.name)}</option>)}
                         </optgroup>
                       );
                     })}
@@ -229,7 +229,7 @@ export default function TransactionsClient() {
               <div key={x.id} className="flex items-center gap-3 p-3">
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">
-                    {x.category.name}
+                    {catName(x.category.name)}
                     {x.note && <span className="text-[var(--muted-foreground)] font-normal"> — {x.note}</span>}
                   </div>
                   <div className="text-xs text-[var(--muted-foreground)]">

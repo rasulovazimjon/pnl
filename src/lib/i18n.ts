@@ -427,6 +427,38 @@ export function isLocale(v: unknown): v is Locale {
   return typeof v === "string" && (LOCALES as readonly string[]).includes(v);
 }
 
+// Localized labels for the built-in (seeded) category names. Keyed by the
+// canonical English name. User-created categories aren't in this map and are
+// shown exactly as typed. Renaming a default removes it from this map naturally
+// (its stored name no longer matches a key), so it becomes a custom label.
+const CATEGORY_NAMES: Record<string, { ru: string; uz: string }> = {
+  "Salary": { ru: "Зарплата", uz: "Ish haqi" },
+  "Business income": { ru: "Доход от бизнеса", uz: "Biznes daromadi" },
+  "Investments": { ru: "Инвестиции", uz: "Investitsiyalar" },
+  "Other income": { ru: "Прочий доход", uz: "Boshqa daromad" },
+  "Product cost": { ru: "Себестоимость товара", uz: "Mahsulot tannarxi" },
+  "Marketplace fees": { ru: "Комиссии маркетплейсов", uz: "Marketpleys komissiyalari" },
+  "Delivery & logistics": { ru: "Доставка и логистика", uz: "Yetkazib berish va logistika" },
+  "Housing / Rent": { ru: "Жильё / Аренда", uz: "Uy-joy / Ijara" },
+  "Utilities": { ru: "Коммунальные услуги", uz: "Kommunal to'lovlar" },
+  "Groceries": { ru: "Продукты", uz: "Oziq-ovqat" },
+  "Dining out": { ru: "Кафе и рестораны", uz: "Tashqarida ovqatlanish" },
+  "Transport": { ru: "Транспорт", uz: "Transport" },
+  "Health": { ru: "Здоровье", uz: "Salomatlik" },
+  "Education": { ru: "Образование", uz: "Ta'lim" },
+  "Entertainment": { ru: "Развлечения", uz: "Ko'ngilochar" },
+  "Shopping": { ru: "Покупки", uz: "Xaridlar" },
+  "Subscriptions": { ru: "Подписки", uz: "Obunalar" },
+  "Taxes": { ru: "Налоги", uz: "Soliqlar" },
+  "Other expenses": { ru: "Прочие расходы", uz: "Boshqa xarajatlar" },
+};
+
+/** Localize a category name if it's a known built-in; otherwise return as-is. */
+export function localizeCategoryName(locale: Locale, name: string): string {
+  if (locale === "en") return name;
+  return CATEGORY_NAMES[name]?.[locale] ?? name;
+}
+
 const MONTHS: Record<Locale, string[]> = {
   en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
   ru: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],

@@ -27,6 +27,7 @@ interface Statement {
 }
 
 function Section({ title, lines, sign }: { title: string; lines: Line[]; sign: "+" | "−" }) {
+  const { catName } = useLanguage();
   if (!lines.length) return null;
   return (
     <>
@@ -35,7 +36,7 @@ function Section({ title, lines, sign }: { title: string; lines: Line[]; sign: "
       </tr>
       {lines.map((l) => (
         <tr key={l.categoryId} className="border-t border-[var(--border)]">
-          <td className="px-4 py-2 pl-8">{l.name}</td>
+          <td className="px-4 py-2 pl-8">{catName(l.name)}</td>
           <td className="px-4 py-2 text-right tabular-nums">{sign}{formatNumber(l.actual)}</td>
           <td className="px-4 py-2 text-right tabular-nums text-[var(--muted-foreground)]">
             {l.budget !== null ? formatNumber(l.budget) : "—"}
