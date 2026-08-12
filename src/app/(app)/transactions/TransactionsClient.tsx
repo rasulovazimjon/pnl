@@ -27,6 +27,14 @@ export default function TransactionsClient() {
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // inline edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editAmount, setEditAmount] = useState("");
+  const [editCategoryId, setEditCategoryId] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editNote, setEditNote] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
+
   const activeCats = useMemo(() => categories.filter((c) => !c.archived), [categories]);
 
   async function loadCategories() {
@@ -74,6 +82,39 @@ export default function TransactionsClient() {
     if (!confirm(t("txn.confirmDelete"))) return;
     await api(`/api/transactions/${id}`, { method: "DELETE" });
     setTxns((list) => list.filter((x) => x.id !== id));
+  }
+
+  function startEdit(x: Transaction) {
+    setError(null);
+    setEditingId(x.id);
+    setEditAmount(String(x.amount));
+    setEditCategoryId(x.categoryId);
+    setEditDate(new Date(x.date).toISOString().slice(0, 10));
+    setEditNote(x.note ?? "");
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+  }
+
+  async function saveEdit(id: string) {
+    setError(null);
+    const amt = parseAmount(editAmount);
+    if (amt === null || amt <= 0) { setError(t("txn.errAmount")); return; }
+    if (!editCategoryId) { setError(t("txn.errCategory")); return; }
+    setEditSaving(true);
+    try {
+      await api(`/api/transactions/${id}`, {
+        method: "PATCH",
+        json: { amount: amt, categoryId: editCategoryId, date: editDate, note: editNote || null },
+      });
+      setEditingId(null);
+      await loadTxns();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setEditSaving(false);
+    }
   }
 
   const monthTotal = txns.reduce((s, x) => s + (x.category.type === "INCOME" ? x.amount : -x.amount), 0);
@@ -143,24 +184,63 @@ export default function TransactionsClient() {
         ) : txns.length === 0 ? (
           <div className="p-6 text-center text-[var(--muted-foreground)]">{t("txn.none")}</div>
         ) : (
-          txns.map((x) => (
-            <div key={x.id} className="flex items-center gap-3 p-3">
-              <div className="flex-1 min-w-0">
-                <div className="font-medium truncate">
-                  {x.category.name}
-                  {x.note && <span className="text-[var(--muted-foreground)] font-normal"> — {x.note}</span>}
+          txns.map((x) =>
+            editingId === x.id ? (
+              /* Inline edit form */
+              <div key={x.id} className="p-3 grid grid-cols-1 sm:grid-cols-12 gap-2 items-end bg-[var(--secondary)]">
+                <div className="sm:col-span-3">
+                  <label className="label">{t("txn.amount")}</label>
+                  <input className="input" inputMode="numeric" value={editAmount} onChange={(e) => setEditAmount(e.target.value)} />
                 </div>
-                <div className="text-xs text-[var(--muted-foreground)]">
-                  {new Date(x.date).toISOString().slice(0, 10)} · {x.user.name}
-                  {x.recurringRuleId && ` · ${t("txn.recurring")}`}
+                <div className="sm:col-span-3">
+                  <label className="label">{t("txn.category")}</label>
+                  <select className="input" value={editCategoryId} onChange={(e) => setEditCategoryId(e.target.value)}>
+                    {TYPE_ORDER.map((type) => {
+                      const cats = activeCats.filter((c) => c.type === type);
+                      if (!cats.length) return null;
+                      return (
+                        <optgroup key={type} label={t(TYPE_KEYS[type])}>
+                          {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        </optgroup>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="label">{t("txn.date")}</label>
+                  <input className="input" type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="label">{t("txn.note")}</label>
+                  <input className="input" placeholder={t("common.optional")} value={editNote} onChange={(e) => setEditNote(e.target.value)} />
+                </div>
+                <div className="sm:col-span-2 flex gap-2">
+                  <button className="btn btn-primary flex-1" onClick={() => saveEdit(x.id)} disabled={editSaving}>
+                    {editSaving ? "…" : t("common.save")}
+                  </button>
+                  <button className="btn btn-ghost" onClick={cancelEdit} disabled={editSaving}>{t("common.cancel")}</button>
                 </div>
               </div>
-              <div className={`font-semibold tabular-nums ${x.category.type === "INCOME" ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
-                {x.category.type === "INCOME" ? "+" : "−"}{formatNumber(x.amount)}
+            ) : (
+              <div key={x.id} className="flex items-center gap-3 p-3">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">
+                    {x.category.name}
+                    {x.note && <span className="text-[var(--muted-foreground)] font-normal"> — {x.note}</span>}
+                  </div>
+                  <div className="text-xs text-[var(--muted-foreground)]">
+                    {new Date(x.date).toISOString().slice(0, 10)} · {x.user.name}
+                    {x.recurringRuleId && ` · ${t("txn.recurring")}`}
+                  </div>
+                </div>
+                <div className={`font-semibold tabular-nums ${x.category.type === "INCOME" ? "text-[var(--income)]" : "text-[var(--expense)]"}`}>
+                  {x.category.type === "INCOME" ? "+" : "−"}{formatNumber(x.amount)}
+                </div>
+                <button className="btn btn-ghost" onClick={() => startEdit(x)} aria-label={t("common.edit")} title={t("common.edit")}>✎</button>
+                <button className="btn btn-danger" onClick={() => del(x.id)} aria-label={t("common.delete")} title={t("common.delete")}>✕</button>
               </div>
-              <button className="btn btn-danger" onClick={() => del(x.id)} aria-label={t("common.delete")}>✕</button>
-            </div>
-          ))
+            )
+          )
         )}
       </div>
     </div>
