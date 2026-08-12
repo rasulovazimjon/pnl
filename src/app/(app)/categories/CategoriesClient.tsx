@@ -5,10 +5,17 @@ import { api } from "@/lib/api";
 import type { Category, CategoryType } from "@/lib/types";
 import { useLanguage } from "@/components/LanguageProvider";
 
-const TYPES: { value: CategoryType; labelKey: string }[] = [
+// Only Income / Expense can be created now (COGS is retired).
+const CREATE_TYPES: { value: CategoryType; labelKey: string }[] = [
   { value: "INCOME", labelKey: "type.income" },
-  { value: "COGS", labelKey: "type.cogsFull" },
   { value: "EXPENSE", labelKey: "type.expense" },
+];
+
+// Sections shown in the list. The Expense section absorbs any legacy COGS
+// categories so they stay visible and can be renamed/archived/deleted.
+const SECTIONS: { labelKey: string; match: (t: CategoryType) => boolean }[] = [
+  { labelKey: "type.income", match: (t) => t === "INCOME" },
+  { labelKey: "type.expense", match: (t) => t !== "INCOME" },
 ];
 
 export default function CategoriesClient() {
@@ -80,7 +87,7 @@ export default function CategoriesClient() {
         <div>
           <label className="label">{t("cat.type")}</label>
           <select className="input" value={type} onChange={(e) => setType(e.target.value as CategoryType)}>
-            {TYPES.map((ty) => <option key={ty.value} value={ty.value}>{t(ty.labelKey)}</option>)}
+            {CREATE_TYPES.map((ty) => <option key={ty.value} value={ty.value}>{t(ty.labelKey)}</option>)}
           </select>
         </div>
         <button className="btn btn-primary" disabled={saving}>{saving ? "…" : t("common.add")}</button>
@@ -92,12 +99,12 @@ export default function CategoriesClient() {
         <div className="card p-8 text-center text-[var(--muted-foreground)]">{t("common.loading")}</div>
       ) : (
         <div className="space-y-5">
-          {TYPES.map((ty) => {
-            const group = visible.filter((c) => c.type === ty.value);
+          {SECTIONS.map((sec) => {
+            const group = visible.filter((c) => sec.match(c.type));
             if (!group.length) return null;
             return (
-              <div key={ty.value} className="card">
-                <div className="px-4 py-2 bg-[var(--secondary)] font-semibold text-sm rounded-t-xl">{t(ty.labelKey)}</div>
+              <div key={sec.labelKey} className="card">
+                <div className="px-4 py-2 bg-[var(--secondary)] font-semibold text-sm rounded-t-xl">{t(sec.labelKey)}</div>
                 <div className="divide-y divide-[var(--border)]">
                   {group.map((c) => (
                     <div key={c.id} className="flex items-center gap-2 px-4 py-2.5">

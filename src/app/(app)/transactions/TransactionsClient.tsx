@@ -8,8 +8,12 @@ import type { Category, Transaction, CategoryType } from "@/lib/types";
 import MonthSwitcher from "@/components/MonthSwitcher";
 import { useLanguage } from "@/components/LanguageProvider";
 
-const TYPE_ORDER: CategoryType[] = ["INCOME", "COGS", "EXPENSE"];
-const TYPE_KEYS: Record<CategoryType, string> = { INCOME: "type.income", COGS: "type.cogs", EXPENSE: "type.expenses" };
+// Two groups for the category picker: Income, and Expenses (which absorbs any
+// legacy COGS categories so they remain selectable).
+const CAT_GROUPS: { labelKey: string; match: (t: CategoryType) => boolean }[] = [
+  { labelKey: "type.income", match: (t) => t === "INCOME" },
+  { labelKey: "type.expenses", match: (t) => t !== "INCOME" },
+];
 
 export default function TransactionsClient() {
   const { t, monthLabel } = useLanguage();
@@ -135,11 +139,11 @@ export default function TransactionsClient() {
         <div className="sm:col-span-4">
           <label className="label">{t("txn.category")}</label>
           <select className="input" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-            {TYPE_ORDER.map((type) => {
-              const cats = activeCats.filter((c) => c.type === type);
+            {CAT_GROUPS.map((g) => {
+              const cats = activeCats.filter((c) => g.match(c.type));
               if (!cats.length) return null;
               return (
-                <optgroup key={type} label={t(TYPE_KEYS[type])}>
+                <optgroup key={g.labelKey} label={t(g.labelKey)}>
                   {cats.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -195,11 +199,11 @@ export default function TransactionsClient() {
                 <div className="sm:col-span-3">
                   <label className="label">{t("txn.category")}</label>
                   <select className="input" value={editCategoryId} onChange={(e) => setEditCategoryId(e.target.value)}>
-                    {TYPE_ORDER.map((type) => {
-                      const cats = activeCats.filter((c) => c.type === type);
+                    {CAT_GROUPS.map((g) => {
+                      const cats = activeCats.filter((c) => g.match(c.type));
                       if (!cats.length) return null;
                       return (
-                        <optgroup key={type} label={t(TYPE_KEYS[type])}>
+                        <optgroup key={g.labelKey} label={t(g.labelKey)}>
                           {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </optgroup>
                       );

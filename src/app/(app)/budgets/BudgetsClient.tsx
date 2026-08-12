@@ -16,7 +16,7 @@ interface Line {
   variance: number | null;
 }
 interface Statement {
-  income: Line[]; cogs: Line[]; expense: Line[];
+  income: Line[]; expense: Line[];
 }
 
 export default function BudgetsClient() {
@@ -36,7 +36,7 @@ export default function BudgetsClient() {
       api<{ categories: { id: string; name: string; type: Line["type"]; archived: boolean }[] }>(`/api/categories`),
     ]);
     const map = new Map<string, Line>();
-    for (const l of [...statement.income, ...statement.cogs, ...statement.expense]) map.set(l.categoryId, l);
+    for (const l of [...statement.income, ...statement.expense]) map.set(l.categoryId, l);
     const all: Line[] = categories
       .filter((c) => !c.archived)
       .map((c) => map.get(c.id) ?? { categoryId: c.id, name: c.name, type: c.type, actual: 0, budget: null, variance: null });
@@ -58,10 +58,9 @@ export default function BudgetsClient() {
     } finally { setSavingId(null); }
   }
 
-  const groups: { key: Line["type"]; title: string }[] = [
-    { key: "INCOME", title: t("bud.incomeTargets") },
-    { key: "COGS", title: t("type.cogsFull") },
-    { key: "EXPENSE", title: t("pnl.operatingExpenses") },
+  const groups: { title: string; match: (t: Line["type"]) => boolean }[] = [
+    { title: t("bud.incomeTargets"), match: (ty) => ty === "INCOME" },
+    { title: t("pnl.operatingExpenses"), match: (ty) => ty !== "INCOME" },
   ];
 
   return (
@@ -76,10 +75,10 @@ export default function BudgetsClient() {
         <div className="card p-8 text-center text-[var(--muted-foreground)]">{t("common.loading")}</div>
       ) : (
         groups.map((g) => {
-          const group = lines.filter((l) => l.type === g.key);
+          const group = lines.filter((l) => g.match(l.type));
           if (!group.length) return null;
           return (
-            <div key={g.key} className="card overflow-x-auto">
+            <div key={g.title} className="card overflow-x-auto">
               <div className="px-4 py-2 bg-[var(--secondary)] font-semibold text-sm">{g.title}</div>
               <table className="w-full text-sm">
                 <thead>

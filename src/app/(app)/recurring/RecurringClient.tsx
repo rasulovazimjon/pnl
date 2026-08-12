@@ -6,8 +6,10 @@ import { formatNumber, parseAmount } from "@/lib/money";
 import type { Category, RecurringRule, CategoryType } from "@/lib/types";
 import { useLanguage } from "@/components/LanguageProvider";
 
-const TYPE_ORDER: CategoryType[] = ["INCOME", "COGS", "EXPENSE"];
-const TYPE_KEYS: Record<CategoryType, string> = { INCOME: "type.income", COGS: "type.cogs", EXPENSE: "type.expenses" };
+const CAT_GROUPS: { labelKey: string; match: (t: CategoryType) => boolean }[] = [
+  { labelKey: "type.income", match: (t) => t === "INCOME" },
+  { labelKey: "type.expenses", match: (t) => t !== "INCOME" },
+];
 
 export default function RecurringClient() {
   const { t } = useLanguage();
@@ -82,11 +84,11 @@ export default function RecurringClient() {
         <div className="sm:col-span-3">
           <label className="label">{t("txn.category")}</label>
           <select className="input" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-            {TYPE_ORDER.map((type) => {
-              const cats = activeCats.filter((c) => c.type === type);
+            {CAT_GROUPS.map((g) => {
+              const cats = activeCats.filter((c) => g.match(c.type));
               if (!cats.length) return null;
               return (
-                <optgroup key={type} label={t(TYPE_KEYS[type])}>
+                <optgroup key={g.labelKey} label={t(g.labelKey)}>
                   {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </optgroup>
               );

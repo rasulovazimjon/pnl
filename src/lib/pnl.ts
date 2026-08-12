@@ -15,12 +15,10 @@ export interface CategoryLine {
 export interface PnLStatement {
   monthKey: string;
   income: CategoryLine[];
-  cogs: CategoryLine[];
+  // Any non-income category (EXPENSE, and legacy COGS) is treated as an expense.
   expense: CategoryLine[];
   totals: {
     income: number;
-    cogs: number;
-    grossProfit: number;
     expense: number;
     netProfit: number;
     marginPct: number | null;
@@ -71,31 +69,23 @@ export async function buildPnL(householdId: string, key: string): Promise<PnLSta
 
   // Only show lines with activity or a budget (keeps the statement clean).
   const active = lines.filter((l) => l.actual !== 0 || l.budget !== null);
-  const byType = (t: CategoryType) =>
-    active
-      .filter((l) => l.type === t)
-      .sort((a, b) => b.actual - a.actual);
+  const sortByActual = (arr: CategoryLine[]) => arr.sort((a, b) => b.actual - a.actual);
 
-  const income = byType("INCOME");
-  const cogs = byType("COGS");
-  const expense = byType("EXPENSE");
+  const income = sortByActual(active.filter((l) => l.type === "INCOME"));
+  // COGS is folded into expenses so legacy categories still count correctly.
+  const expense = sortByActual(active.filter((l) => l.type !== "INCOME"));
 
   const sum = (arr: CategoryLine[]) => arr.reduce((s, l) => s + l.actual, 0);
   const totalIncome = sum(income);
-  const totalCogs = sum(cogs);
-  const grossProfit = totalIncome - totalCogs;
   const totalExpense = sum(expense);
-  const netProfit = grossProfit - totalExpense;
+  const netProfit = totalIncome - totalExpense;
 
   return {
     monthKey: key,
     income,
-    cogs,
     expense,
     totals: {
       income: totalIncome,
-      cogs: totalCogs,
-      grossProfit,
       expense: totalExpense,
       netProfit,
       marginPct: totalIncome > 0 ? (netProfit / totalIncome) * 100 : null,

@@ -9,12 +9,7 @@ export const DEFAULT_CATEGORIES: { name: string; type: CategoryType }[] = [
   { name: "Investments", type: "INCOME" },
   { name: "Other income", type: "INCOME" },
 
-  // Cost of goods sold (direct costs of earning business income)
-  { name: "Product cost", type: "COGS" },
-  { name: "Marketplace fees", type: "COGS" },
-  { name: "Delivery & logistics", type: "COGS" },
-
-  // Operating expenses
+  // Expenses
   { name: "Housing / Rent", type: "EXPENSE" },
   { name: "Utilities", type: "EXPENSE" },
   { name: "Groceries", type: "EXPENSE" },

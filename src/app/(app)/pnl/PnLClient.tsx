@@ -17,12 +17,9 @@ interface Line {
 interface Statement {
   monthKey: string;
   income: Line[];
-  cogs: Line[];
   expense: Line[];
   totals: {
     income: number;
-    cogs: number;
-    grossProfit: number;
     expense: number;
     netProfit: number;
     marginPct: number | null;
@@ -102,9 +99,6 @@ export default function PnLClient() {
             <tbody>
               <Section title={t("pnl.revenue")} lines={stmt.income} sign="+" />
               <TotalRow label={t("pnl.totalRevenue")} value={tot!.income} />
-
-              <Section title={t("type.cogsFull")} lines={stmt.cogs} sign="−" />
-              <TotalRow label={t("pnl.grossProfit")} value={tot!.grossProfit} positive={tot!.grossProfit >= 0} />
 
               <Section title={t("pnl.operatingExpenses")} lines={stmt.expense} sign="−" />
               <TotalRow label={t("pnl.totalExpenses")} value={tot!.expense} />

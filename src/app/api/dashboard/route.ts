@@ -18,8 +18,8 @@ export async function GET(req: NextRequest) {
     monthlyTrend(session.householdId, 6, month),
   ]);
 
-  // Top expense categories this month (COGS + EXPENSE).
-  const topExpenses = [...statement.cogs, ...statement.expense]
+  // Top expense categories this month.
+  const topExpenses = [...statement.expense]
     .sort((a, b) => b.actual - a.actual)
     .slice(0, 5)
     .map((l) => ({ name: l.name, amount: l.actual }));

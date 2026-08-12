@@ -14,7 +14,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 
 interface Data {
   month: string;
-  totals: { income: number; cogs: number; grossProfit: number; expense: number; netProfit: number; marginPct: number | null };
+  totals: { income: number; expense: number; netProfit: number; marginPct: number | null };
   trend: { monthKey: string; income: number; expense: number; net: number }[];
   topExpenses: { name: string; amount: number }[];
 }
@@ -63,7 +63,7 @@ export default function DashboardClient() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <Kpi label={t("dash.income")} value={data.totals.income} tone="income" />
-            <Kpi label={t("dash.expenses")} value={data.totals.cogs + data.totals.expense} tone="expense" />
+            <Kpi label={t("dash.expenses")} value={data.totals.expense} tone="expense" />
             <Kpi label={t("dash.netProfit")} value={data.totals.netProfit} tone="net" />
             <div className="card p-4">
               <div className="text-xs uppercase tracking-wide text-[var(--muted-foreground)]">{t("dash.netMargin")}</div>
