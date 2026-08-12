@@ -32,7 +32,9 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
     <header className="border-b border-[var(--border)] bg-[var(--card)] sticky top-0 z-20">
       <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-[var(--primary)]">₴ P&amp;L</span>
+          <Link href="/dashboard" className="font-bold text-[var(--primary)] hover:opacity-80 transition-opacity" aria-label={t("nav.dashboard")}>
+            ₴ P&amp;L
+          </Link>
         </div>
 
         <nav className="hidden md:flex items-center gap-1">
