@@ -37,6 +37,8 @@ model User {
   name         String
   role         Role
   passwordHash String
+  // Telegram handle (without @), for the upcoming Telegram integration.
+  telegramUsername String?
   createdAt    DateTime @default(now())
 
   householdId String

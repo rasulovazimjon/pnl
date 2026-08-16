@@ -55,7 +55,7 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
         </nav>
 
         <div className="flex items-center gap-2">
-          <span className="hidden sm:inline text-sm text-[var(--muted-foreground)]">{name} · {roleLabel}</span>
+          <Link href="/profile" className="hidden sm:inline text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors" title={t("profile.title")}>{name} · {roleLabel}</Link>
           <LanguageSwitcher />
           <button onClick={logout} className="btn btn-ghost text-sm">{t("nav.signOut")}</button>
           <button className="md:hidden btn btn-ghost" onClick={() => setOpen((o) => !o)} aria-label={t("nav.menu")}>☰</button>
@@ -76,6 +76,15 @@ export default function Nav({ name, role }: { name: string; role: "HUSBAND" | "W
               {t(l.key)}
             </Link>
           ))}
+          <Link
+            href="/profile"
+            onClick={() => setOpen(false)}
+            className={`px-3 py-2 rounded-md text-sm font-medium ${
+              pathname === "/profile" ? "bg-[var(--secondary)]" : "text-[var(--muted-foreground)]"
+            }`}
+          >
+            {t("profile.title")} · {name}
+          </Link>
         </nav>
       )}
     </header>

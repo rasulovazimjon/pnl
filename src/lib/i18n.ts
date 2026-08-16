@@ -154,6 +154,24 @@ const en: Dict = {
   "cat.renamePrompt": "Rename category",
   "cat.confirmDelete": "Delete \"{name}\"? If it has transactions it will be archived instead.",
 
+  // profile
+  "profile.title": "Profile",
+  "profile.accountInfo": "Account info",
+  "profile.name": "Display name",
+  "profile.email": "Email",
+  "profile.role": "Role",
+  "profile.household": "Household",
+  "profile.telegram": "Telegram username",
+  "profile.telegramHint": "For the upcoming Telegram integration.",
+  "profile.telegramPlaceholder": "@username",
+  "profile.saved": "Saved",
+  "profile.changePassword": "Change password",
+  "profile.currentPassword": "Current password",
+  "profile.newPassword": "New password",
+  "profile.confirmPassword": "Confirm new password",
+  "profile.passwordChanged": "Password changed successfully",
+  "profile.passwordMismatch": "New passwords don't match",
+
   // language
   "lang.label": "Language",
 };
@@ -279,6 +297,23 @@ const ru: Dict = {
   "cat.renamePrompt": "Переименовать категорию",
   "cat.confirmDelete": "Удалить «{name}»? Если есть транзакции, категория будет отправлена в архив.",
 
+  "profile.title": "Профиль",
+  "profile.accountInfo": "Информация об аккаунте",
+  "profile.name": "Отображаемое имя",
+  "profile.email": "Эл. почта",
+  "profile.role": "Роль",
+  "profile.household": "Семья",
+  "profile.telegram": "Имя пользователя Telegram",
+  "profile.telegramHint": "Для будущей интеграции с Telegram.",
+  "profile.telegramPlaceholder": "@username",
+  "profile.saved": "Сохранено",
+  "profile.changePassword": "Сменить пароль",
+  "profile.currentPassword": "Текущий пароль",
+  "profile.newPassword": "Новый пароль",
+  "profile.confirmPassword": "Подтвердите новый пароль",
+  "profile.passwordChanged": "Пароль успешно изменён",
+  "profile.passwordMismatch": "Новые пароли не совпадают",
+
   "lang.label": "Язык",
 };
 
@@ -402,6 +437,23 @@ const uz: Dict = {
   "cat.newPlaceholder": "masalan, Sport zali obunasi",
   "cat.renamePrompt": "Kategoriya nomini o'zgartirish",
   "cat.confirmDelete": "\"{name}\" o'chirilsinmi? Agar tranzaksiyalari bo'lsa, arxivga o'tkaziladi.",
+
+  "profile.title": "Profil",
+  "profile.accountInfo": "Hisob ma'lumotlari",
+  "profile.name": "Ko'rsatiladigan ism",
+  "profile.email": "Email",
+  "profile.role": "Rol",
+  "profile.household": "Oila",
+  "profile.telegram": "Telegram foydalanuvchi nomi",
+  "profile.telegramHint": "Kelgusidagi Telegram integratsiyasi uchun.",
+  "profile.telegramPlaceholder": "@username",
+  "profile.saved": "Saqlandi",
+  "profile.changePassword": "Parolni o'zgartirish",
+  "profile.currentPassword": "Joriy parol",
+  "profile.newPassword": "Yangi parol",
+  "profile.confirmPassword": "Yangi parolni tasdiqlang",
+  "profile.passwordChanged": "Parol muvaffaqiyatli o'zgartirildi",
+  "profile.passwordMismatch": "Yangi parollar mos kelmayapti",
 
   "lang.label": "Til",
 };
