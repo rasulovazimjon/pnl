@@ -27,7 +27,7 @@ function Kpi({ label, value, tone }: { label: string; value: number; tone?: "inc
   return (
     <div className="card p-4">
       <div className="text-xs uppercase tracking-wide text-[var(--muted-foreground)]">{label}</div>
-      <div className={`text-xl font-bold mt-1 tabular-nums ${color}`}>{formatUZS(value)}</div>
+      <div className={`text-lg sm:text-xl font-bold mt-1 tabular-nums break-words ${color}`}>{formatUZS(value)}</div>
     </div>
   );
 }
@@ -49,9 +49,12 @@ export default function DashboardClient() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">{t("dash.title")}</h1>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <MonthSwitcher value={month} onChange={setMonth} />
-          <Link href="/transactions" className="btn btn-primary">{t("dash.addTransaction")}</Link>
+          <Link href="/transactions" className="btn btn-primary shrink-0" aria-label={t("dash.addTransaction")}>
+            <span className="sm:hidden text-lg leading-none">+</span>
+            <span className="hidden sm:inline">{t("dash.addTransaction")}</span>
+          </Link>
         </div>
       </div>
 
@@ -67,7 +70,7 @@ export default function DashboardClient() {
             <Kpi label={t("dash.netProfit")} value={data.totals.netProfit} tone="net" />
             <div className="card p-4">
               <div className="text-xs uppercase tracking-wide text-[var(--muted-foreground)]">{t("dash.netMargin")}</div>
-              <div className="text-xl font-bold mt-1 tabular-nums">
+              <div className="text-lg sm:text-xl font-bold mt-1 tabular-nums">
                 {data.totals.marginPct === null ? "—" : `${data.totals.marginPct.toFixed(1)}%`}
               </div>
             </div>

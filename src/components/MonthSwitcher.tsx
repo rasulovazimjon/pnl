@@ -16,7 +16,7 @@ export default function MonthSwitcher({
       <button className="btn btn-ghost" onClick={() => onChange(shiftMonth(value, -1))} aria-label="Previous month">
         ←
       </button>
-      <span className="font-semibold min-w-[9.5rem] text-center">{monthLabel(value)}</span>
+      <span className="font-semibold text-sm sm:text-base min-w-[7rem] sm:min-w-[9.5rem] text-center">{monthLabel(value)}</span>
       <button className="btn btn-ghost" onClick={() => onChange(shiftMonth(value, 1))} aria-label="Next month">
         →
       </button>
